@@ -22,10 +22,10 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen bg-[url('/images/bg-auth.svg')] bg-cover bg-no-repeat bg-center text-gray-950">
-      <NavBar />
+      {/* <NavBar /> */}
       <main className="mx-2 min-md:mx-16 flex flex-col gap-16">
         <div className="hero">
-          <span className="p-2 bg-gray-500">AI-Powered</span>
+          <span className="p-2 primary-button w-fit">AI-Powered</span>
           <h1>Your All-in-One AI Study Companion</h1>
           <h2>
             Stay on top of courses, track GPA, and get smarter study

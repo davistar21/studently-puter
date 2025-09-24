@@ -12,21 +12,19 @@ import {
 } from "lucide-react";
 import { Link } from "react-router";
 
-export default function Layout() {
+export default function NavBar() {
   const [open, setOpen] = useState(false);
 
   const navItems = [
-    { name: "Dashboard", icon: LayoutDashboard, to: "/" },
+    { name: "Dashboard", icon: LayoutDashboard, to: "/dashboard" },
     { name: "GPA Tracker", icon: GraduationCap, to: "/gpa" },
-    { name: "Study Assistant", icon: BookOpen, to: "/assistant" },
-    { name: "Planner", icon: Calendar, to: "/planner" },
-    { name: "Analytics", icon: BarChart3, to: "/analytics" },
+    { name: "Semesters", icon: BookOpen, to: "/semesters" },
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex  max-h-[100vh] bg-gray-50">
       {/* Sidebar (desktop) */}
-      <aside className="hidden md:flex flex-col w-64 bg-white shadow-lg">
+      <aside className="hidden  md:flex flex-col w-64 bg-white shadow-lg">
         <div className="px-6 py-4 text-2xl font-bold text-blue-600">
           Studently
         </div>

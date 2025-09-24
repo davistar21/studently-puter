@@ -7,4 +7,5 @@ export default [
   route("/gpa", "routes/gpa-tracker.tsx"),
   route("/semesters", "routes/semesters.tsx"),
   route("/semesters/:id", "routes/semesterPage.tsx"),
+  route("/semesters/:id/courses/:id", "routes/courseDetailsPage.tsx"),
 ] satisfies RouteConfig;

@@ -22,9 +22,9 @@ const SemesterPage = () => {
       <h1 className="text-2xl font-bold text-gray-800">Semester 1 Overview</h1>
 
       {/* Overview Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="flex overflow-x-auto py-4 px-2 scrollbar gap-6">
         <motion.div
-          className="bg-white rounded-2xl shadow p-4 flex flex-col items-center"
+          className="bg-white min-w-[200px] flex-shrink-0 rounded-2xl shadow-lg p-4 flex flex-col items-center"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -33,7 +33,7 @@ const SemesterPage = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white rounded-2xl shadow p-6 text-center"
+          className="bg-white min-w-[200px] flex-shrink-0 rounded-2xl shadow-lg p-6 text-center"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -43,7 +43,7 @@ const SemesterPage = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white rounded-2xl shadow p-6 text-center"
+          className="bg-white min-w-[200px] flex-shrink-0 rounded-2xl shadow-lg p-6 text-center"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -53,7 +53,7 @@ const SemesterPage = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white rounded-2xl shadow p-6 text-center"
+          className="bg-white min-w-[200px] flex-shrink-0 rounded-2xl shadow-lg p-6 text-center"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -67,8 +67,13 @@ const SemesterPage = () => {
 
       {/* Courses Deck */}
       <div>
-        <h2 className="text-xl font-semibold mb-4 text-gray-800">Courses</h2>
-        <div className="flex gap-6 overflow-x-auto pb-4">
+        <div className="flex mb-4 justify-between items-center">
+          <h2 className="text-xl font-semibold text-gray-800">Courses</h2>
+          <button className="bg-blue-500 font-semibold p-2 rounded-full">
+            + Add Course
+          </button>
+        </div>
+        <div className="flex gap-6 scrollbar overflow-x-auto pb-4">
           {courses.map((course, idx) => {
             const id = crypto.randomUUID();
 
@@ -107,14 +112,17 @@ const SemesterPage = () => {
             </thead>
             <tbody>
               {courses.map((c, idx) => (
-                <tr key={idx} className="border-b last:border-none">
+                <tr
+                  key={idx}
+                  className="border-b last:border-none text-gray-800"
+                >
                   <td className="p-3">{c.code}</td>
                   <td className="p-3">{c.units}</td>
                   <td className="p-3">{c.grade}</td>
                   <td className="p-3">{c.gp}</td>
                 </tr>
               ))}
-              <tr className="bg-gray-50 font-semibold">
+              <tr className="bg-gray-50 font-semibold text-gray-600">
                 <td className="p-3">Total</td>
                 <td className="p-3">{totalUnits}</td>
                 <td className="p-3">—</td>
