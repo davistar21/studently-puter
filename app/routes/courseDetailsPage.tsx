@@ -1,5 +1,7 @@
 // src/pages/CourseDetailPage.tsx
 import { motion } from "framer-motion";
+import AppDialog from "~/components/AppDialog";
+import { Button } from "~/components/ui/button";
 import TopicDeck from "~/components/TopicDeck";
 
 const CourseDetailPage = () => {
@@ -12,6 +14,7 @@ const CourseDetailPage = () => {
     progress: Math.floor(Math.random() * 100),
     topics: ["Limits", "Derivatives", "Integrals"],
   };
+  function handleSubmit() {}
 
   return (
     <div className="p-6 space-y-8">
@@ -100,12 +103,51 @@ const CourseDetailPage = () => {
       <TopicDeck topics={course.topics} />
       {/* Actions */}
       <div className="flex gap-4">
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+        <AppDialog
+          triggerLabel="Add Topic"
+          title="Add a new topic"
+          description="Fill in the topic details below."
+        >
+          <form className="space-y-2" onSubmit={handleSubmit}>
+            <label htmlFor="course-name" className="w-full">
+              <input
+                type="text"
+                name="course-name"
+                id="course-name"
+                placeholder="Course Name"
+                className=" border rounded-md"
+              />
+            </label>
+            <label htmlFor="course-code" className="w-full">
+              <input
+                type="text"
+                name="course-code"
+                id="course-code"
+                placeholder="Course Code"
+                className="border rounded-md "
+              />
+            </label>
+            <label htmlFor="course-units" className="w-full">
+              <input
+                type="number"
+                name="course-units"
+                id="course-units"
+                placeholder="Units"
+                className=" border rounded-md "
+              />
+            </label>
+            <Button
+              type="submit"
+              className="bg-blue-500 hover:bg-blue-700 transition ml-auto text-white"
+            >
+              Save
+            </Button>
+          </form>
+        </AppDialog>
+        {/* <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
           Add Topic
-        </button>
-        <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
-          Analyze with AI
-        </button>
+        </button> */}
+        <button className="primary-button w-fit">Analyze with AI</button>
       </div>
     </div>
   );

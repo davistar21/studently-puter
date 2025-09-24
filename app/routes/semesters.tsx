@@ -1,46 +1,11 @@
 // src/pages/Semesters.tsx
 import { motion } from "framer-motion";
+import { useEffect } from "react";
 import { Link } from "react-router";
 import { PieChart, Pie, Cell } from "recharts";
 import GPAGauge from "~/components/gpaGauge";
-
-const semesters = [
-  {
-    id: 1,
-    name: "Semester 1",
-    gpa: 3.6,
-    courses: 6,
-    units: 18,
-  },
-  {
-    id: 2,
-    name: "Semester 2",
-    gpa: 2.9,
-    courses: 5,
-    units: 15,
-  },
-  {
-    id: 3,
-    name: "Semester 3",
-    gpa: 3.9,
-    courses: 7,
-    units: 21,
-  },
-  {
-    id: 4,
-    name: "Semester 4",
-    gpa: 4.3,
-    courses: 7,
-    units: 21,
-  },
-  {
-    id: 5,
-    name: "Semester 5",
-    gpa: 2.5,
-    courses: 7,
-    units: 21,
-  },
-];
+import { Button } from "~/components/ui/button";
+import { useAppStore } from "~/lib/store";
 
 // GPA Gauge helper
 const IGPAGauge = ({ gpa }: { gpa: number }) => {
@@ -84,14 +49,20 @@ const IGPAGauge = ({ gpa }: { gpa: number }) => {
 };
 
 export default function Semesters() {
+  const { addSemester, semesters, getTotalUnits } = useAppStore();
+  useEffect(() => {
+    if (semesters.length == 0) {
+      addSemester({ id: "1", name: "Semester 1", units: 0, courses: [] });
+      console.log(semesters);
+    }
+  }, []);
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <h1 className="text-2xl font-bold mb-6 text-blue-600">Your Semesters</h1>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {semesters.map((sem, idx) => (
-          <Link to={`/semesters/${sem.id}`}>
+          <Link to={`/semesters/${sem.id}`} key={crypto.randomUUID()}>
             <motion.div
-              key={sem.id}
               whileHover={{ scale: 1.05 }}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -103,21 +74,18 @@ export default function Semesters() {
                   {sem.name}
                 </h2>
                 <div className="ml-auto">
-                  <GPAGauge gpa={sem.gpa} />
+                  <GPAGauge gpa={3} />
                 </div>
               </div>
 
               <div className="text-sm text-gray-600 space-y-1">
-                <p>📚 Courses: {sem.courses}</p>
-                <p>🔢 Units: {sem.units}</p>
+                <p>📚 Courses: {sem.courses.length}</p>
+                <p>🔢 Units: {getTotalUnits(sem.id)}</p>
               </div>
 
-              <Link
-                to={`/semesters/${sem.id}`}
-                className="mt-4 inline-block text-center bg-blue-500 text-white py-2 rounded-xl hover:bg-blue-600 transition"
-              >
+              <Button className="mt-4 inline-block text-center bg-blue-500 text-white py-2 rounded-xl hover:bg-blue-600 transition">
                 View Courses
-              </Link>
+              </Button>
             </motion.div>
           </Link>
         ))}

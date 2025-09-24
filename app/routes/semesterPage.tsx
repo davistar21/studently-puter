@@ -1,21 +1,52 @@
 // src/pages/SemesterPage.tsx
 import { motion } from "framer-motion";
 import GPAGauge from "../components/gpaGauge";
-import { Link } from "react-router";
+import { Link, useParams } from "react-router";
+import AppDialog from "~/components/AppDialog";
+import { Button } from "~/components/ui/button";
+import { useState, type FormEvent } from "react";
+import { useAppStore } from "~/lib/store";
 
 const SemesterPage = () => {
   // Dummy semester data
   const gpa = 3.42;
-  const courses = [
-    { code: "MTH101", name: "Calculus I", units: 3, grade: "A", gp: 4 },
-    { code: "PHY101", name: "Physics I", units: 3, grade: "B", gp: 3 },
-    { code: "CHM101", name: "Chemistry I", units: 2, grade: "A", gp: 4 },
-    { code: "ENG101", name: "English I", units: 2, grade: "C", gp: 2 },
-  ];
+  // const dumbCourses = [
+  //   { code: "MTH101", name: "Calculus I", units: 3, grade: "A" },
+  //   { code: "PHY101", name: "Physics I", units: 3, grade: "B" },
+  //   { code: "CHM101", name: "Chemistry I", units: 2, grade: "A" },
+  //   { code: "ENG101", name: "English I", units: 2, grade: "C" },
+  // ];
+  const { semesterId } = useParams(); // URL like /semesters/:semesterId
+  const { semesters, addCourse } = useAppStore();
+
+  const semester = semesters.find((s) => s.id === semesterId);
+  console.log(semester);
+  const courses = semester ? semester.courses : [];
 
   const totalUnits = courses.reduce((sum, c) => sum + c.units, 0);
-  const randomCompletion = Math.floor(Math.random() * 100);
+  const randomCompletion = 56;
 
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget.closest("form");
+    if (!form || !semesterId) return;
+
+    const formData = new FormData(form);
+    const name = formData.get("course-name") as string;
+    const code = formData.get("course-code") as string;
+    const units = formData.get("course-units") as string;
+    if (!name || !code || !units) return;
+
+    const newCourse = {
+      id: crypto.randomUUID(),
+      name,
+      code,
+      units: Number(units),
+    };
+    // setCourses((prev) => [...prev, newCourse]);
+    addCourse(semesterId, newCourse);
+    form.reset();
+  }
   return (
     <div className="p-6 space-y-8">
       {/* Header */}
@@ -67,33 +98,81 @@ const SemesterPage = () => {
 
       {/* Courses Deck */}
       <div>
+        {/* Example Add Course dialog */}
+
         <div className="flex mb-4 justify-between items-center">
-          <h2 className="text-xl font-semibold text-gray-800">Courses</h2>
-          <button className="bg-blue-500 font-semibold p-2 rounded-full">
+          {courses.length !== 0 && (
+            <h2 className="text-xl font-semibold text-gray-800">Courses</h2>
+          )}
+          <AppDialog
+            triggerLabel="Add Course"
+            title="Add a new course"
+            description="Fill in the course details below."
+          >
+            <form className="space-y-2" onSubmit={handleSubmit}>
+              <label htmlFor="course-name" className="w-full">
+                <input
+                  type="text"
+                  name="course-name"
+                  id="course-name"
+                  placeholder="Course Name"
+                  className=" border rounded-md"
+                />
+              </label>
+              <label htmlFor="course-code" className="w-full">
+                <input
+                  type="text"
+                  name="course-code"
+                  id="course-code"
+                  placeholder="Course Code"
+                  className="border rounded-md "
+                />
+              </label>
+              <label htmlFor="course-units" className="w-full">
+                <input
+                  type="number"
+                  name="course-units"
+                  id="course-units"
+                  placeholder="Units"
+                  className=" border rounded-md "
+                />
+              </label>
+              <Button
+                type="submit"
+                className="bg-blue-500 hover:bg-blue-700 transition ml-auto text-white"
+              >
+                Save
+              </Button>
+            </form>
+          </AppDialog>
+          {/* <button className="bg-blue-500 font-semibold p-2 rounded-full">
             + Add Course
-          </button>
+          </button> */}
         </div>
         <div className="flex gap-6 scrollbar overflow-x-auto pb-4">
-          {courses.map((course, idx) => {
-            const id = crypto.randomUUID();
+          {courses.length !== 0 &&
+            courses.map((course, idx) => {
+              // const id = crypto.randomUUID();
 
-            return (
-              <Link to={`courses/${id}`}>
-                <motion.div
-                  key={idx}
-                  className="min-w-[200px] bg-white shadow rounded-2xl p-4 flex-shrink-0"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <h3 className="font-bold text-gray-800">{course.code}</h3>
-                  <p className="text-gray-600">{course.name}</p>
-                  <div className="mt-3 text-sm text-gray-500">
-                    <p>Units: {course.units}</p>
-                    <p>Grade: {course.grade}</p>
-                  </div>
-                </motion.div>
-              </Link>
-            );
-          })}
+              return (
+                <Link to={`courses/${course.id}`}>
+                  <motion.div
+                    key={idx}
+                    className="w-[200px] bg-white shadow rounded-2xl p-4 flex-shrink-0"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <h3 className="font-bold text-gray-800">{course.code}</h3>
+                    <p title={course.name} className="truncate text-gray-600">
+                      {course.name}
+                    </p>
+                    <div className="mt-3 text-sm text-gray-500">
+                      <p>Units: {course.units}</p>
+                      <p>Grade: {course.grade || "-"}</p>
+                    </div>
+                  </motion.div>
+                </Link>
+              );
+            })}
         </div>
       </div>
 
@@ -107,7 +186,7 @@ const SemesterPage = () => {
                 <th className="p-3 text-left">Course</th>
                 <th className="p-3 text-left">Units</th>
                 <th className="p-3 text-left">Grade</th>
-                <th className="p-3 text-left">Grade Point</th>
+                <th className="p-3 text-left">0</th>
               </tr>
             </thead>
             <tbody>
@@ -119,7 +198,7 @@ const SemesterPage = () => {
                   <td className="p-3">{c.code}</td>
                   <td className="p-3">{c.units}</td>
                   <td className="p-3">{c.grade}</td>
-                  <td className="p-3">{c.gp}</td>
+                  <td className="p-3">{0}</td>
                 </tr>
               ))}
               <tr className="bg-gray-50 font-semibold text-gray-600">

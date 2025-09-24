@@ -11,6 +11,7 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import { ThemeProvider } from "./components/ThemeProvider";
 import NavBar from "./components/NavBar";
+import { SidebarProvider } from "./components/ui/sidebar";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -47,12 +48,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
+    // <SidebarProvider>
     <div className="app-container flex lg:flex-row flex-col">
       <NavBar />
       <main>
         <Outlet />
       </main>
     </div>
+    // </SidebarProvider>
   );
 }
 

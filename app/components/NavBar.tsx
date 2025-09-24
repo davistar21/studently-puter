@@ -24,7 +24,7 @@ export default function NavBar() {
   return (
     <div className="flex  max-h-[100vh] bg-gray-50">
       {/* Sidebar (desktop) */}
-      <aside className="hidden  md:flex flex-col w-64 bg-white shadow-lg">
+      <aside className="hidden   md:flex flex-col w-64 bg-white shadow-lg">
         <div className="px-6 py-4 text-2xl font-bold text-blue-600">
           Studently
         </div>
