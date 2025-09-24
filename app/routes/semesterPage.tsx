@@ -1,6 +1,7 @@
 // src/pages/SemesterPage.tsx
 import { motion } from "framer-motion";
 import GPAGauge from "../components/gpaGauge";
+import { Link } from "react-router";
 
 const SemesterPage = () => {
   // Dummy semester data
@@ -68,20 +69,26 @@ const SemesterPage = () => {
       <div>
         <h2 className="text-xl font-semibold mb-4 text-gray-800">Courses</h2>
         <div className="flex gap-6 overflow-x-auto pb-4">
-          {courses.map((course, idx) => (
-            <motion.div
-              key={idx}
-              className="min-w-[200px] bg-white shadow rounded-2xl p-4 flex-shrink-0"
-              whileHover={{ scale: 1.05 }}
-            >
-              <h3 className="font-bold text-gray-800">{course.code}</h3>
-              <p className="text-gray-600">{course.name}</p>
-              <div className="mt-3 text-sm text-gray-500">
-                <p>Units: {course.units}</p>
-                <p>Grade: {course.grade}</p>
-              </div>
-            </motion.div>
-          ))}
+          {courses.map((course, idx) => {
+            const id = crypto.randomUUID();
+
+            return (
+              <Link to={`courses/${id}`}>
+                <motion.div
+                  key={idx}
+                  className="min-w-[200px] bg-white shadow rounded-2xl p-4 flex-shrink-0"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <h3 className="font-bold text-gray-800">{course.code}</h3>
+                  <p className="text-gray-600">{course.name}</p>
+                  <div className="mt-3 text-sm text-gray-500">
+                    <p>Units: {course.units}</p>
+                    <p>Grade: {course.grade}</p>
+                  </div>
+                </motion.div>
+              </Link>
+            );
+          })}
         </div>
       </div>
 

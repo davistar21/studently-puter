@@ -6,5 +6,5 @@ export default [
   route("/dashboard", "routes/dashboard.tsx"),
   route("/gpa", "routes/gpa-tracker.tsx"),
   route("/semesters", "routes/semesters.tsx"),
-  route("/semesters/:id", "routes/semester-page.tsx"),
+  route("/semesters/:id", "routes/semesterPage.tsx"),
 ] satisfies RouteConfig;
