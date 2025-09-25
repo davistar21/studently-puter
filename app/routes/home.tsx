@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Studently" },
-    { name: "description", content: "Welcome to React Router!" },
+    { name: "description", content: "Your All-in-One AI Assistant" },
   ];
 }
 
