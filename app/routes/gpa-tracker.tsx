@@ -27,7 +27,7 @@ const courseData = [
 
 export default function GpaTracker() {
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen  bg-gray-50 p-6">
       {/* Header */}
       <h1 className="text-2xl font-bold text-blue-600 mb-6">GPA Tracker</h1>
 

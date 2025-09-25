@@ -52,13 +52,39 @@ export default function Semesters() {
   const { addSemester, semesters, getTotalUnits } = useAppStore();
   useEffect(() => {
     if (semesters.length == 0) {
-      addSemester({ id: "1", name: "Semester 1", units: 0, courses: [] });
+      addSemester({
+        id: crypto.randomUUID(),
+        name: "Semester 1",
+        units: 0,
+        courses: [],
+      });
       console.log(semesters);
     }
   }, []);
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-2xl font-bold mb-6 text-blue-600">Your Semesters</h1>
+      <div className="flex flex-col md:flex-row items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold mb-6 text-blue-600">
+          Your Semesters
+        </h1>
+        <motion.button
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          whileHover={{ scale: 1.05 }}
+          transition={{ duration: 0.4 }}
+          onClick={() => {
+            addSemester({
+              id: crypto.randomUUID(),
+              name: "Semester " + (semesters.length + 1),
+              units: 0,
+              courses: [],
+            });
+          }}
+          className="primary-gradient rounded-full py-4 px-6 w-fit "
+        >
+          + Add Semester
+        </motion.button>
+      </div>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {semesters.map((sem, idx) => (
           <Link to={`/semesters/${sem.id}`} key={crypto.randomUUID()}>

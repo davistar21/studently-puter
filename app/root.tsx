@@ -11,7 +11,8 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import { ThemeProvider } from "./components/ThemeProvider";
 import NavBar from "./components/NavBar";
-import { SidebarProvider } from "./components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
+import { AppSidebar } from "./components/AppSidebar";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -35,7 +36,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="bg-red-500">
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
           {children}
         </ThemeProvider>
@@ -48,14 +49,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    // <SidebarProvider>
-    <div className="app-container flex lg:flex-row flex-col">
-      <NavBar />
+    <SidebarProvider>
+      {/* <div className="app-container flex lg:flex-row flex-col"> */}
+      {/* <NavBar /> */}
+      <AppSidebar />
       <main>
+        <header className="flex items-center p-4 sticky">
+          <SidebarTrigger className="text-black" />
+          <h2 className="!font-bold md:hidden">Studently</h2>{" "}
+        </header>
         <Outlet />
       </main>
-    </div>
-    // </SidebarProvider>
+      {/* </div> */}
+    </SidebarProvider>
   );
 }
 
