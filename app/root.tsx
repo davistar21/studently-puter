@@ -1,5 +1,6 @@
 import {
   isRouteErrorResponse,
+  Link,
   Links,
   Meta,
   Outlet,
@@ -56,7 +57,9 @@ export default function App() {
       <main>
         <header className="flex items-center p-4 sticky">
           <SidebarTrigger className="text-black" />
-          <h2 className="!font-bold md:hidden">Studently</h2>{" "}
+          <Link to="/dashboard">
+            <h2 className="!font-bold md:hidden">Studently</h2>{" "}
+          </Link>
         </header>
         <Outlet />
       </main>

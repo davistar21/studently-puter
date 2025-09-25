@@ -30,7 +30,7 @@ body {
 }
 
 main {
-  @apply min-h-screen w-full px-4;
+  @apply min-h-screen w-full md:px-4;
 }
 h1 {
   @apply text-6xl text-gradient leading-tight tracking-[-2px] font-semibold;
@@ -52,7 +52,9 @@ button {
 textarea {
   @apply w-full p-4 inset-shadow rounded-2xl focus:outline-none bg-white;
 }
-
+.sidebar-menu-item.active {
+  background-color: red;
+}
 form {
   @apply flex flex-col items-start gap-8 w-full;
 }
@@ -151,9 +153,6 @@ form {
 
 @utility gradient-hover {
   @apply bg-gradient-to-b from-light-blue-100 to-light-blue-200;
-}
-small {
-  color: #4955db;
 }
 @utility primary-gradient {
   background: linear-gradient(to bottom, #1c3e77, #4955db);

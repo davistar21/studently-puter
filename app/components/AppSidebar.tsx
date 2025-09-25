@@ -1,5 +1,9 @@
-import { Home, Inbox, Search, Settings } from "lucide-react";
 import {
+  Home,
+  Inbox,
+  Search,
+  Settings,
+  User2Icon,
   LayoutDashboard,
   GraduationCap,
   BookOpen,
@@ -9,6 +13,7 @@ import {
   PenLine,
   Pencil,
   Library,
+  User,
   School,
   FileText,
   Brain,
@@ -17,7 +22,7 @@ import {
   Menu,
   X,
 } from "lucide-react";
-import { Link } from "react-router";
+import { Link, NavLink } from "react-router";
 import {
   Sidebar,
   SidebarContent,
@@ -62,30 +67,56 @@ const items = [
 export function AppSidebar() {
   return (
     <Sidebar className=" rounded-full">
-      <SidebarContent className="bg-gray-100 shadow-xl text-gray-800">
+      <SidebarContent className="bg-gray-50 shadow-xl text-gray-800">
         <SidebarGroup>
           <SidebarGroupLabel className="text-black text-2xl font-semibold text-gradient mb-2">
             Studently
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="flex gap-1">
               {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link to={item.url}>
+                <SidebarMenuItem
+                  key={item.title}
+                  className="group rounded-md px-2 py-1 bg-gray-100 hover:text-black hover:bg-gray-200 transition-colors duration-300 "
+                >
+                  <SidebarMenuButton
+                    asChild
+                    className="bg-gray-100 hover:text-black hover:bg-gray-200 transition-colors duration-300 "
+                  >
+                    <NavLink to={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </Link>
+                    </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        <SidebarFooter className="flex items-start px-4 mt-auto">
-          <button>Log out</button>
-          <button>Log out</button>
-          <button>Log out</button>
+        <SidebarFooter className="flex items-start gap-2 mt-auto">
+          <Link
+            to="#"
+            className="flex gap-2 w-full p-2 rounded-md text-sm bg-gray-100 items-center"
+          >
+            <User2Icon />
+            <div>Profile</div>
+          </Link>
+
+          <Link
+            to="#"
+            className="flex gap-2 w-full p-2 rounded-md text-sm bg-gray-100 items-center"
+          >
+            <Settings />
+            <div>Settings</div>
+          </Link>
+
+          <Link
+            to="#"
+            className="flex gap-2 text-red-600 bg-red-100 w-full p-2 rounded-md text-sm items-center"
+          >
+            <LogOut className="text-red-700" />
+            <div>Logout</div>
+          </Link>
         </SidebarFooter>
       </SidebarContent>
     </Sidebar>

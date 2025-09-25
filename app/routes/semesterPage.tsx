@@ -20,7 +20,7 @@ const SemesterPage = () => {
   const { semesters, addCourse } = useAppStore();
 
   const semester = semesters.find((s) => s.id === semesterId);
-  console.log(semester);
+  console.log("semester", semester);
   const courses = semester ? semester.courses : [];
 
   const totalUnits = courses.reduce((sum, c) => sum + c.units, 0);
@@ -29,6 +29,8 @@ const SemesterPage = () => {
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget.closest("form");
+    console.log("semesterId", semesterId);
+    console.log("form", form);
     if (!form || !semesterId) return;
 
     const formData = new FormData(form);
@@ -139,7 +141,7 @@ const SemesterPage = () => {
               </label>
               <Button
                 type="submit"
-                className="bg-blue-500 hover:bg-blue-700 transition ml-auto text-white"
+                className="primary-button text-white w-fit ml-auto"
               >
                 Save
               </Button>

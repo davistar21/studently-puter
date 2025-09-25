@@ -52,13 +52,13 @@ export default function Semesters() {
   const { addSemester, semesters, getTotalUnits } = useAppStore();
   useEffect(() => {
     if (semesters.length == 0) {
-      addSemester({
-        id: crypto.randomUUID(),
-        name: "Semester 1",
-        units: 0,
-        courses: [],
-      });
-      console.log(semesters);
+      // addSemester({
+      //   id: crypto.randomUUID(),
+      //   name: "Semester 1",
+      //   units: 0,
+      //   courses: [],
+      // });
+      // console.log(semesters);
     }
   }, []);
   return (

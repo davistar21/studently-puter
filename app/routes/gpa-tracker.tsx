@@ -36,19 +36,19 @@ export default function GpaTracker() {
         <StatCard title="Current GPA" value="3.72" highlight="blue" />
         <StatCard title="Target GPA" value="3.90" highlight="green" />
         <StatCard title="Courses Taken" value="24" highlight="coral" />
-        <StatCard title="Units Total" value="24" highlight="teal" />
+        <StatCard title="Units Total" value="57" highlight="teal" />
       </div>
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* GPA Progress Over Semesters */}
-        <div className="bg-white p-6 rounded-2xl shadow">
+        <div className="bg-white md:p-6 p-2 rounded-2xl shadow">
           <h2 className="text-lg font-semibold mb-4">GPA Progress</h2>
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height={280}>
             <LineChart data={gpaData}>
-              <CartesianGrid strokeDasharray="3 3" />
+              <CartesianGrid strokeDasharray="3 5" />
               <XAxis dataKey="semester" />
-              <YAxis domain={[0, 4]} />
+              <YAxis domain={[0, 5]} ticks={[0, 1, 2, 3, 4, 5]} />
               <Tooltip />
               <Line
                 type="monotone"
@@ -62,8 +62,8 @@ export default function GpaTracker() {
         </div>
 
         {/* Course Grades */}
-        <div className="bg-white p-6 rounded-2xl shadow">
-          <h2 className="text-lg font-semibold mb-4">Recent Course Grades</h2>
+        <div className="bg-white p-6 rounded-2xl shadow flex flex-col justify-between">
+          <h2 className="text-lg font-semibold mb-4">Last Semester</h2>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={courseData}>
               <CartesianGrid strokeDasharray="3 3" />

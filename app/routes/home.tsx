@@ -9,6 +9,25 @@ export function meta({}: Route.MetaArgs) {
     { name: "description", content: "Your All-in-One AI Assistant" },
   ];
 }
+// export function meta({}: Route.MetaArgs) {
+//   return [
+//     { title: "Studently" },
+//     { name: "description", content: "Your All-in-One AI Assistant" },
+
+//     // Open Graph (for Facebook, LinkedIn, etc.)
+//     { property: "og:title", content: "Studently" },
+//     { property: "og:description", content: "Your All-in-One AI Assistant" },
+//     { property: "og:image", content: "https://yourdomain.com/og-image.jpg" },
+//     { property: "og:url", content: "https://yourdomain.com" },
+//     { property: "og:type", content: "website" },
+
+//     // Twitter Card
+//     { name: "twitter:card", content: "summary_large_image" },
+//     { name: "twitter:title", content: "Studently" },
+//     { name: "twitter:description", content: "Your All-in-One AI Assistant" },
+//     { name: "twitter:image", content: "https://yourdomain.com/og-image.jpg" },
+//   ];
+// }
 
 export default function Home() {
   const [isMobile, setIsMobile] = useState(false);
