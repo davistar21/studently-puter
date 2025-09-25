@@ -23,28 +23,44 @@
 
 html,
 body {
-  @apply bg-white;
+  @apply bg-white m-0;
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
   }
 }
 
 main {
-  @apply min-h-screen w-full md:px-4;
+  /* background: linear-gradient(135deg, #c5fffeb1, #e2e2ff); */
+  @apply min-h-screen w-full md:px-4 dark:bg-gradient-to-br from-[#40044c] to-[#270764];
 }
 h1 {
-  @apply text-6xl text-gradient leading-tight tracking-[-2px] font-semibold;
+  @apply text-5xl lg:text-[84px] text-gradient leading-tight tracking-[-2px] font-semibold;
+  color: transparent;
+  background: linear-gradient(135deg, #ab8c95, black, #8e97c5);
+  background-clip: text;
 }
-
+.text-gradient-2 {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#4955db] to-[#1c3e77];
+  color: transparent;
+  background: linear-gradient(135deg, #4955db, #1c3e77);
+  background-clip: text;
+}
 h2 {
-  @apply text-3xl text-dark-200;
+  @apply text-xl lg:text-3xl text-gray-700 dark:text-gray-300 font-[500];
+  color: transparent;
+  background: linear-gradient(135deg, #ab8c95, black, #8e97c5);
+  background-clip: text;
 }
 
 label {
   @apply text-dark-200;
 }
 input {
-  @apply w-full p-2 inset-shadow rounded-2xl focus:outline-none bg-white;
+  @apply w-full p-3 rounded-xl  bg-white;
+  border: 2px solid rgba(36, 99, 235, 0.421);
+  box-shadow: inset 0 0 4px 0 rgba(36, 99, 235, 0.421);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 button {
   @apply cursor-pointer;
@@ -84,8 +100,12 @@ form {
     @apply primary-gradient text-white rounded-full px-4 py-2 cursor-pointer w-full  translate-0  hover:-translate-y-0.5 hover:primary-gradient-hover transition-all duration-300 ease-in-out;
   }
   .hero {
-    @apply flex flex-col gap-2 items-center justify-center text-center;
+    @apply flex flex-col gap-4 items-center justify-center text-center;
   }
+  .top-hero {
+    /* background: linear-gradient(135deg, #025d68, blue); */
+  }
+
   .resume-nav {
     @apply flex flex-row justify-between items-center p-4 border-b border-gray-200;
   }
@@ -149,6 +169,9 @@ form {
 
 @utility text-gradient {
   @apply bg-clip-text text-transparent bg-gradient-to-r from-[#AB8C95] via-[#000000] to-[#8E97C5];
+}
+@utility text-gradient-2 {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#4955db] to-[#1c3e77];
 }
 
 @utility gradient-hover {

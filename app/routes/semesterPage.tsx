@@ -4,8 +4,9 @@ import GPAGauge from "../components/gpaGauge";
 import { Link, useParams } from "react-router";
 import AppDialog from "~/components/AppDialog";
 import { Button } from "~/components/ui/button";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useAppStore } from "~/lib/store";
+import type { Course } from "types/store";
 
 const SemesterPage = () => {
   // Dummy semester data
@@ -17,13 +18,17 @@ const SemesterPage = () => {
   //   { code: "ENG101", name: "English I", units: 2, grade: "C" },
   // ];
   const { semesterId } = useParams(); // URL like /semesters/:semesterId
-  const { semesters, addCourse } = useAppStore();
+  const { semesters, getSemester, addCourse } = useAppStore();
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [totalUnits, setTotalUnits] = useState(0);
+  useEffect(() => {
+    if (!semesterId) return;
+    const semester = getSemester(semesterId);
+    const semesterCourses = semester ? semester.courses : [];
+    setCourses(semesterCourses);
+    setTotalUnits(semesterCourses.reduce((sum, c) => sum + c.units, 0));
+  }, [semesterId]);
 
-  const semester = semesters.find((s) => s.id === semesterId);
-  console.log("semester", semester);
-  const courses = semester ? semester.courses : [];
-
-  const totalUnits = courses.reduce((sum, c) => sum + c.units, 0);
   const randomCompletion = 56;
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {

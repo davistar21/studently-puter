@@ -7,14 +7,13 @@ export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 ">
+    <div className="min-h-screen flex flex-col gap-4 items-center justify-center bg-gray-50 -mt-12">
       <div className="flex px-3 min-md:mx-10 justify-between items-center w-full">
-        <h1 className="">Studently</h1>
-        <ThemeToggle />
+        {/* <h1 className="">Studently</h1> */}
       </div>
 
       {/* Headline */}
-      <h2 className="">{isLogin ? "Welcome Back" : "Join Us"}</h2>
+      <h2 className="!font-semibold">{isLogin ? "Welcome Back" : "Join Us"}</h2>
 
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
         {/* Logo */}

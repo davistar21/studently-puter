@@ -80,7 +80,7 @@ export default function Semesters() {
               courses: [],
             });
           }}
-          className="primary-gradient rounded-full py-4 px-6 w-fit "
+          className="primary-gradient text-white font-semibold rounded-full py-4 px-6 w-fit "
         >
           + Add Semester
         </motion.button>

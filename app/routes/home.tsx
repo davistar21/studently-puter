@@ -40,19 +40,30 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-[url('/images/bg-auth.svg')] bg-cover bg-no-repeat bg-center text-gray-950">
-      {/* <NavBar /> */}
-      <main className="mx-2 min-md:mx-16 flex flex-col gap-16">
-        <div className="hero">
-          <span className="p-2 primary-button w-fit">AI-Powered</span>
-          <h1>Your All-in-One AI Study Companion</h1>
-          <h2>
+    <>
+      <div className="  flex flex-col gap-16">
+        <div className="hero top-hero !justify-start pb-24 min-h-screen">
+          <span className="p-2  w-fit">AI-Powered</span>
+          <h1 className="">
+            Your All-in-One{" "}
+            <span className="text-gradient-2 animate-pulse block">
+              AI Study Companion
+            </span>
+          </h1>
+          <h2 className=" lg:w-[60%]">
             Stay on top of courses, track GPA, and get smarter study
             recommendations — all in one app.{" "}
           </h2>
-          <button className="primary-button w-fit">Join the Waitlist</button>
+          <div className="flex gap-6 items-center justify-center mt-auto w-full">
+            <button className="primary-button px-6 py-4 text-xl font-semibold w-fit">
+              Watch Demo
+            </button>
+            <button className="primary-button w-fit px-6 py-4 text-xl font-semibold">
+              Get Started
+            </button>
+          </div>
         </div>
-        <div className="hero min-lg:flex-row">
+        <div className="hero min-lg:flex-row px-2 md:px-4">
           <div>
             <h2>Too many apps, not enough focus</h2>
             <h2>
@@ -82,13 +93,6 @@ export default function Home() {
               <li> Notes scattered across different apps and files</li>
               <li>The mental load of switching between too many tools</li>
             </ul>
-            {/* Always Know Where You Stand — Real-time GPA and course tracking.
-
-🔔 Smarter Reminders — AI-powered notifications that actually matter.
-
-🧠 Personalized Study Guidance — Tailored recommendations to help you improve.
-
-📝 Notes That Work for You — Summaries that save hours of revision time. */}
           </div>
         </div>
         <div className="flex flex-col gap-2 items-center">
@@ -211,11 +215,11 @@ export default function Home() {
           </div>
         </section>
         )
-      </main>
+      </div>
       <footer>
         <section className="w-full"></section>
         <section className="w-full"></section>
       </footer>
-    </div>
+    </>
   );
 }

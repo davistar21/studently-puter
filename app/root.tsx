@@ -14,6 +14,7 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import NavBar from "./components/NavBar";
 import { SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
 import { AppSidebar } from "./components/AppSidebar";
+import ThemeToggle from "./components/ThemeToggle";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -60,6 +61,9 @@ export default function App() {
           <Link to="/dashboard">
             <h2 className="!font-bold md:hidden">Studently</h2>{" "}
           </Link>
+          <div className="ml-auto">
+            <ThemeToggle />
+          </div>
         </header>
         <Outlet />
       </main>
