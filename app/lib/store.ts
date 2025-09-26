@@ -4,7 +4,12 @@ import type { AppState, Semester, Course, Topic } from "types/store";
 
 export const useAppStore = create<AppState>((set, get) => ({
   semesters: [],
-
+  getCourse: (semesterId: string, courseId: string) => {
+    const semester = get().getSemester(semesterId);
+    if (!semester) return;
+    const course = semester.courses.find((e) => e.id === courseId);
+    return course;
+  },
   addSemester: (semester: Semester) =>
     set((state) => ({ semesters: [...state.semesters, semester] })),
 

@@ -3,19 +3,75 @@ import { motion } from "framer-motion";
 import AppDialog from "~/components/AppDialog";
 import { Button } from "~/components/ui/button";
 import TopicDeck from "~/components/TopicDeck";
+import { useParams } from "react-router";
+import { useEffect, useState, type FormEvent } from "react";
+import { useAppStore } from "~/lib/store";
+import type { Topic, Course } from "types/store";
 
-const CourseDetailPage = () => {
+const CourseDetailsPage = () => {
   // Dummy data
-  const course = {
-    code: "MTH101",
-    name: "Calculus I",
-    units: 3,
-    grade: "A",
-    progress: Math.floor(Math.random() * 100),
-    topics: ["Limits", "Derivatives", "Integrals"],
-  };
-  function handleSubmit() {}
+  const { semesterId, courseId } = useParams();
+  const { getCourse, getSemester, semesters } = useAppStore();
+  const [course, setCourse] = useState<Course | null>(null);
+  const dummyTopics: Topic[] = [
+    {
+      id: "1",
+      title: "Partial Derivatives and Gradient Vectors",
+      status: "completed",
+    },
+    {
+      id: "2",
+      title: "Multiple Integrals: Double and Triple Integrals",
+      status: "in_progress",
+    },
+    {
+      id: "3",
+      title: "Chain Rule for Multivariable Functions",
+      status: "not_started",
+    },
+    {
+      id: "4",
+      title: "Vector Calculus: Divergence and Curl",
+      status: "not_completed",
+    },
+    {
+      id: "5",
+      title: "Surface Integrals and Green's Theorem",
+      status: "completed",
+    },
+  ];
 
+  const [topics, setTopics] = useState<Topic[]>([]);
+  useEffect(() => {
+    if (!courseId || !semesterId) return;
+    const course = getCourse(semesterId, courseId);
+    if (!course) return;
+    setCourse(course);
+  }, [courseId, semesterId]);
+  // const course = {
+  //   code: "MTH101",
+  //   name: "Calculus I",
+  //   units: 3,
+  //   grade: "-",
+  //   progress: 78,
+  //   topics: ["Limits", "Derivatives", "Integrals"],
+  // };
+  function handleSubmit() {}
+  function handleAddTopic(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget.closest("form");
+    if (!form) return;
+    const formData = new FormData(form);
+    const title = formData.get("course-topic") as string;
+    if (!title) return;
+    const newTopic: Topic = {
+      id: crypto.randomUUID(),
+      title,
+      status: "not_started",
+    };
+    setTopics((prev) => [...prev, newTopic]);
+  }
+  if (!course) return <div>Failed to fetch course</div>;
   return (
     <div className="p-6 space-y-8">
       {/* Header */}
@@ -23,6 +79,7 @@ const CourseDetailPage = () => {
         className="bg-white shadow rounded-2xl p-6"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
       >
         <h1 className="text-2xl font-bold text-gray-800">
           {course.code} - {course.name}
@@ -32,22 +89,67 @@ const CourseDetailPage = () => {
         </p>
         <div className="mt-4">
           <div className="w-full bg-gray-200 rounded-full h-3">
-            <div
+            <motion.div
+              key={course.progress} // Re-triggers animation on progress change
               className="bg-blue-500 h-3 rounded-full"
-              style={{ width: `${course.progress}%` }}
-            ></div>
+              initial={{ width: 0 }}
+              animate={{ width: `${course.progress}%` }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            />
           </div>
           <p className="text-sm text-gray-500 mt-1">
             Progress: {course.progress}%
           </p>
         </div>
       </motion.div>
+      <div className="topics">
+        <div className="flex mb-4 justify-between items-center">
+          {/* <motion.button
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.4 }}
+            onClick={handleAddTopic}
+            className="primary-gradient text-white font-semibold rounded-full py-4 px-6 w-fit "
+          >
+            + Add Topic
+          </motion.button> */}
 
+          {topics.length > 0 && (
+            <h2 className="text-xl font-semibold text-gray-800">Topics</h2>
+          )}
+          <AppDialog
+            triggerLabel="Add Topic"
+            title="Add a new course"
+            description="Fill in the course details below."
+          >
+            <form className="space-y-2" onSubmit={handleAddTopic}>
+              <label htmlFor="course-topic" className="w-full">
+                <input
+                  type="text"
+                  name="course-topic"
+                  id="course-topic"
+                  placeholder="Add Topic"
+                  className="border rounded-md capitalize"
+                />
+              </label>
+
+              <Button
+                type="submit"
+                className="primary-button text-white w-fit ml-auto"
+              >
+                Save
+              </Button>
+            </form>
+          </AppDialog>
+        </div>
+        <TopicDeck topics={topics} />
+      </div>
       {/* Tabs / Sections */}
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="flex scrollbar p-2 overflow-x-auto gap-6">
         {/* Study Assistant */}
         <motion.div
-          className="bg-white shadow rounded-2xl p-6"
+          className="bg-white shadow rounded-2xl min-w-[300px] p-6"
           whileHover={{ scale: 1.02 }}
         >
           <h2 className="text-lg font-semibold mb-3">Study Assistant</h2>
@@ -58,7 +160,7 @@ const CourseDetailPage = () => {
 
         {/* Recommendations */}
         <motion.div
-          className="bg-white shadow rounded-2xl p-6"
+          className="bg-white shadow rounded-2xl min-w-[300px] p-6"
           whileHover={{ scale: 1.02 }}
         >
           <h2 className="text-lg font-semibold mb-3">
@@ -71,7 +173,7 @@ const CourseDetailPage = () => {
 
         {/* Q&A */}
         <motion.div
-          className="bg-white shadow rounded-2xl p-6"
+          className="bg-white shadow rounded-2xl min-w-[300px] p-6"
           whileHover={{ scale: 1.02 }}
         >
           <h2 className="text-lg font-semibold mb-3">Q&A Section</h2>
@@ -100,7 +202,7 @@ const CourseDetailPage = () => {
           ))}
         </div>
       </div> */}
-      <TopicDeck topics={course.topics} />
+
       {/* Actions */}
       <div className="flex gap-4">
         <AppDialog
@@ -153,4 +255,4 @@ const CourseDetailPage = () => {
   );
 };
 
-export default CourseDetailPage;
+export default CourseDetailsPage;

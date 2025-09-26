@@ -7,7 +7,7 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { Button } from "./ui/button";
-
+import { motion } from "framer-motion";
 interface IAppDialog {
   triggerLabel?: string;
   title?: string;
@@ -24,9 +24,15 @@ const AppDialog: React.FC<IAppDialog> = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="primary-button w-fit text-white rounded-full">
+        <motion.button
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          whileHover={{ scale: 1.05 }}
+          transition={{ duration: 0.4 }}
+          className="primary-gradient text-white font-semibold rounded-full py-4 px-6 w-fit "
+        >
           {triggerLabel}
-        </Button>
+        </motion.button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] bg-gray-200 shadow-md">
         <DialogHeader>

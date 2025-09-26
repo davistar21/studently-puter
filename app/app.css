@@ -51,6 +51,14 @@ h2 {
   background: linear-gradient(135deg, #ab8c95, black, #8e97c5);
   background-clip: text;
 }
+.text-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 label {
   @apply text-dark-200;
@@ -76,8 +84,7 @@ form {
 }
 .scrollbar {
   scrollbar-width: none;
-  /* scroll-snap-type: mandatory; */
-  /* scroll-snap-align: left; */
+  scroll-snap-type: x mandatory;
 }
 
 @layer components {

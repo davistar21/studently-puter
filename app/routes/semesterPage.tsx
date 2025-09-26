@@ -34,8 +34,6 @@ const SemesterPage = () => {
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget.closest("form");
-    console.log("semesterId", semesterId);
-    console.log("form", form);
     if (!form || !semesterId) return;
 
     const formData = new FormData(form);
@@ -50,7 +48,7 @@ const SemesterPage = () => {
       code,
       units: Number(units),
     };
-    // setCourses((prev) => [...prev, newCourse]);
+    setCourses((prev) => [...prev, newCourse]);
     addCourse(semesterId, newCourse);
     form.reset();
   }
@@ -71,35 +69,44 @@ const SemesterPage = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white min-w-[200px] flex-shrink-0 rounded-2xl shadow-lg p-6 text-center"
+          className="bg-white min-w-[200px] flex flex-col gap-3 justify-center flex-shrink-0 rounded-2xl shadow-lg p-6 text-center"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <p className="text-3xl font-bold text-blue-600">{courses.length}</p>
           <p className="text-gray-600">Courses</p>
+          <p className="text-4xl font-bold text-blue-600">{courses.length}</p>
         </motion.div>
 
         <motion.div
-          className="bg-white min-w-[200px] flex-shrink-0 rounded-2xl shadow-lg p-6 text-center"
+          className="bg-white min-w-[200px] flex flex-col gap-3 justify-center flex-shrink-0 rounded-2xl shadow-lg p-6 text-center"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <p className="text-3xl font-bold text-green-600">{totalUnits}</p>
           <p className="text-gray-600">Units</p>
+          <p className="text-4xl font-bold text-green-600">{totalUnits}</p>
         </motion.div>
 
         <motion.div
-          className="bg-white min-w-[200px] flex-shrink-0 rounded-2xl shadow-lg p-6 text-center"
+          className="bg-white min-w-[200px] flex flex-col gap-3 justify-center flex-shrink-0 rounded-2xl shadow-lg p-6 text-center"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <p className="text-3xl font-bold text-coral-500">
+          <p className="text-gray-600">Completion</p>
+          <p className="text-3xl font-bold  text-pink-800">
             {randomCompletion}%
           </p>
-          <p className="text-gray-600">Completion</p>
+        </motion.div>
+        <motion.div
+          className="bg-white min-w-[200px] flex flex-col gap-3 justify-center flex-shrink-0 rounded-2xl shadow-lg p-6 text-center"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <p className="text-gray-600">Days to Exam</p>
+          <p className="text-3xl font-bold  text-red-800">27</p>
         </motion.div>
       </div>
 
@@ -117,22 +124,22 @@ const SemesterPage = () => {
             description="Fill in the course details below."
           >
             <form className="space-y-2" onSubmit={handleSubmit}>
-              <label htmlFor="course-name" className="w-full">
-                <input
-                  type="text"
-                  name="course-name"
-                  id="course-name"
-                  placeholder="Course Name"
-                  className=" border rounded-md"
-                />
-              </label>
               <label htmlFor="course-code" className="w-full">
                 <input
                   type="text"
                   name="course-code"
                   id="course-code"
                   placeholder="Course Code"
-                  className="border rounded-md "
+                  className="border rounded-md uppercase placeholder:capitalize"
+                />
+              </label>
+              <label htmlFor="course-name" className="w-full">
+                <input
+                  type="text"
+                  name="course-name"
+                  id="course-name"
+                  placeholder="Course Name"
+                  className=" border rounded-md uppercase  placeholder:capitalize"
                 />
               </label>
               <label htmlFor="course-units" className="w-full">
@@ -162,13 +169,14 @@ const SemesterPage = () => {
               // const id = crypto.randomUUID();
 
               return (
-                <Link to={`courses/${course.id}`}>
+                <Link to={`courses/${course.id}`} key={course.id}>
                   <motion.div
                     key={idx}
                     className="w-[200px] bg-white shadow rounded-2xl p-4 flex-shrink-0"
                     whileHover={{ scale: 1.05 }}
                   >
                     <h3 className="font-bold text-gray-800">{course.code}</h3>
+
                     <p title={course.name} className="truncate text-gray-600">
                       {course.name}
                     </p>

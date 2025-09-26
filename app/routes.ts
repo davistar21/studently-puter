@@ -8,5 +8,8 @@ export default [
   route("/semesters", "routes/semesters.tsx"),
   route("/study", "routes/study.tsx"),
   route("/semesters/:semesterId", "routes/semesterPage.tsx"),
-  route("/semesters/:id/courses/:id", "routes/courseDetailsPage.tsx"),
+  route(
+    "/semesters/:semesterId/courses/:courseId",
+    "routes/courseDetailsPage.tsx"
+  ),
 ] satisfies RouteConfig;

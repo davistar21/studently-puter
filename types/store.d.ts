@@ -4,6 +4,7 @@ export interface Topic {
   id: string;
   title: string;
   status: "not_started" | "in_progress" | "not_completed" | "completed";
+  progress?: number;
 }
 
 export interface Course {
@@ -11,6 +12,7 @@ export interface Course {
   name: string;
   units: number;
   code: string;
+  progress?: number;
   grade?: string;
   topics?: Topic[];
 }
@@ -26,6 +28,10 @@ export interface AppState {
   semesters: Semester[];
 
   // actions
+  getCourse: (
+    semesterId: string,
+    courseId: string
+  ) => Course | undefined | null;
   getSemester: (semesterId: string) => Semester | undefined | null;
   getTotalUnits: (semesterId: string) => number | undefined | null;
   addSemester: (semester: Semester) => void;
