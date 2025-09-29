@@ -1,62 +1,66 @@
-// src/pages/SemesterPage.tsx
 import { motion } from "framer-motion";
 import GPAGauge from "../components/gpaGauge";
 import { Link, useParams } from "react-router";
 import AppDialog from "~/components/AppDialog";
 import { Button } from "~/components/ui/button";
 import { useEffect, useState, type FormEvent } from "react";
-import { useAppStore } from "~/lib/store";
-import type { Course } from "types/store";
 import FileUploader from "~/components/FileUploader";
+import { usePuterStore } from "~/lib/puter";
+import Loader from "~/components/Loader";
+import capitalizeWords from "~/utils/capitalizeWords";
+import { useAppStore } from "~/lib/store";
 
 const SemesterPage = () => {
-  // Dummy semester data
   const gpa = 0.0;
-  // const dumbCourses = [
-  //   { code: "MTH101", name: "Calculus I", units: 3, grade: "A" },
-  //   { code: "PHY101", name: "Physics I", units: 3, grade: "B" },
-  //   { code: "CHM101", name: "Chemistry I", units: 2, grade: "A" },
-  //   { code: "ENG101", name: "English I", units: 2, grade: "C" },
-  // ];
-  const { semesterId } = useParams(); // URL like /semesters/:semesterId
-  const { semesters, getSemester, addCourse } = useAppStore();
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [totalUnits, setTotalUnits] = useState(0);
-  useEffect(() => {
-    if (!semesterId) return;
-    const semester = getSemester(semesterId);
-    const semesterCourses = semester ? semester.courses : [];
-    setCourses(semesterCourses);
-    setTotalUnits(semesterCourses.reduce((sum, c) => sum + c.units, 0));
-  }, [semesterId]);
-
+  const { semesterId } = useParams();
+  const { semesters, isLoading, addCourseToSemester, getSemesterById } =
+    useAppStore();
+  const semester = getSemesterById(semesterId || "");
+  console.log("emeser,", semesters);
+  const courses = semester?.courses ?? [];
+  const totalUnits = semester?.units ?? 0;
+  const [error, setError] = useState("");
+  const { kv } = usePuterStore();
   const randomCompletion = 56;
   function handleEdit(id: string) {}
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget.closest("form");
     if (!form || !semesterId) return;
 
     const formData = new FormData(form);
     const name = formData.get("course-name") as string;
+
     const code = formData.get("course-code") as string;
-    const units = formData.get("course-units") as string;
-    if (!name || !code || !units) return;
+    const courseUnits = formData.get("course-units") as string;
+    if (!name || !code || !courseUnits) return;
 
     const newCourse = {
-      id: String(courses.length + 1),
-      name,
-      code,
-      units: Number(units),
+      id: crypto.randomUUID().split("-")[0],
+      name: capitalizeWords(name),
+      code: code.toUpperCase(),
+      units: Number(courseUnits),
     };
-    setCourses((prev) => [...prev, newCourse]);
-    addCourse(semesterId, newCourse);
-    form.reset();
+    try {
+      await addCourseToSemester(kv, semesterId, newCourse);
+      form.reset();
+    } catch (err: any) {
+      setError(err?.message || "Failed to add course");
+    }
   }
+  if (error)
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="">Error:{error}</div>
+      </div>
+    );
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-6 space-y-8   min-h-screen bg-[url('/images/bg-soft-light.png')] dark:bg-[url('/images/bg-soft-dark.png')] bg-cover bg-repeat bg-center relative">
+      {isLoading && <Loader />}
       {/* Header */}
-      <h1 className="text-2xl font-bold text-gray-800">Semester 1 Overview</h1>
+      <h1 className="text-2xl font-bold text-gray-800">
+        {semester?.name} Overview
+      </h1>
 
       {/* Overview Stats */}
       <div className="flex overflow-x-auto py-4 px-2 scrollbar gap-6">
@@ -76,7 +80,7 @@ const SemesterPage = () => {
           transition={{ delay: 0.1 }}
         >
           <p className="text-gray-600">Courses</p>
-          <p className="text-4xl font-bold text-blue-600">{courses.length}</p>
+          <p className="text-4xl font-bold text-blue-600">{courses?.length}</p>
         </motion.div>
 
         <motion.div
@@ -116,7 +120,7 @@ const SemesterPage = () => {
         {/* Example Add Course dialog */}
 
         <div className="flex mb-4 justify-between items-center">
-          {courses.length !== 0 && (
+          {courses?.length !== 0 && (
             <h2 className="text-xl font-semibold text-gray-800">Courses</h2>
           )}
           <AppDialog
@@ -165,30 +169,32 @@ const SemesterPage = () => {
           </button> */}
         </div>
         <div className="flex gap-6 scrollbar overflow-x-auto pb-4">
-          {courses.length !== 0 &&
-            courses.map((course, idx) => {
+          {courses?.length !== 0 &&
+            courses?.map((course, idx) => {
               // const id = crypto.randomUUID();
 
               return (
                 <Link to={`courses/${course.id}`} key={idx}>
                   <motion.div
                     key={idx}
-                    className="w-[200px] bg-white shadow rounded-2xl p-4 flex-shrink-0"
+                    className="w-[200px] bg-neumorphic shadow rounded-2xl p-4 flex-shrink-0 dark:bg-neumorphic-dark"
                     whileHover={{ scale: 1.05 }}
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.3 }}
                     transition={{ delay: idx * 0.1, duration: 0.4 }}
                   >
-                    <h3 className="font-bold text-gray-800">{course.code}</h3>
+                    <h3 className="font-bold text-gray-800 uppercase dark:text-gray-200">
+                      {course.code}
+                    </h3>
 
                     <p
                       title={course.name}
-                      className="truncate capitalize text-gray-600"
+                      className="truncate capitalize text-gray-600 dark:text-gray-400"
                     >
                       {course.name}
                     </p>
-                    <div className="mt-3 text-sm text-gray-500">
+                    <div className="mt-3 text-sm text-gray-500 dark:text-gray-400">
                       <p>Units: {course.units}</p>
                       <p>Grade: {course.grade || "-"}</p>
                     </div>
@@ -234,7 +240,7 @@ const SemesterPage = () => {
               </tr>
             </thead>
             <tbody>
-              {courses.map((c, idx) => (
+              {courses?.map((c, idx) => (
                 <tr
                   key={idx}
                   className="border-b last:border-none text-gray-800"
@@ -242,52 +248,54 @@ const SemesterPage = () => {
                   <td className="p-3">{c.code}</td>
                   <td className="p-3">{c.units}</td>
                   <td className="p-3">{c.grade}</td>
-                  <AppDialog
-                    triggerLabel="Edit"
-                    title="Add a new course"
-                    description="Fill in the course details below."
-                  >
-                    <form
-                      className="space-y-2"
-                      onSubmit={() => {
-                        handleEdit(c.id);
-                      }}
+                  <td>
+                    <AppDialog
+                      triggerLabel="Edit"
+                      title="Add a new course"
+                      description="Fill in the course details below."
                     >
-                      <label htmlFor="course-code" className="w-full">
-                        <input
-                          type="text"
-                          name="course-code"
-                          id="course-code"
-                          placeholder="Course Code"
-                          className="border rounded-md uppercase placeholder:capitalize"
-                        />
-                      </label>
-                      <label htmlFor="course-name" className="w-full">
-                        <input
-                          type="text"
-                          name="course-name"
-                          id="course-name"
-                          placeholder="Course Name"
-                          className=" border rounded-md uppercase  placeholder:capitalize"
-                        />
-                      </label>
-                      <label htmlFor="course-units" className="w-full">
-                        <input
-                          type="number"
-                          name="course-units"
-                          id="course-units"
-                          placeholder="Units"
-                          className=" border rounded-md "
-                        />
-                      </label>
-                      <Button
-                        type="submit"
-                        className="primary-button text-white w-fit ml-auto"
+                      <form
+                        className="space-y-2"
+                        onSubmit={() => {
+                          handleEdit(c.id);
+                        }}
                       >
-                        Save
-                      </Button>
-                    </form>
-                  </AppDialog>
+                        <label htmlFor="course-code" className="w-full">
+                          <input
+                            type="text"
+                            name="course-code"
+                            id="course-code"
+                            placeholder="Course Code"
+                            className="border rounded-md uppercase placeholder:capitalize"
+                          />
+                        </label>
+                        <label htmlFor="course-name" className="w-full">
+                          <input
+                            type="text"
+                            name="course-name"
+                            id="course-name"
+                            placeholder="Course Name"
+                            className=" border rounded-md uppercase  placeholder:capitalize"
+                          />
+                        </label>
+                        <label htmlFor="course-units" className="w-full">
+                          <input
+                            type="number"
+                            name="course-units"
+                            id="course-units"
+                            placeholder="Units"
+                            className=" border rounded-md "
+                          />
+                        </label>
+                        <Button
+                          type="submit"
+                          className="primary-button text-white w-fit ml-auto"
+                        >
+                          Save
+                        </Button>
+                      </form>
+                    </AppDialog>
+                  </td>
                 </tr>
               ))}
               <tr className="bg-gray-50 font-semibold text-gray-600">

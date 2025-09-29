@@ -22,7 +22,8 @@ import {
   Menu,
   X,
 } from "lucide-react";
-import { Link, NavLink } from "react-router";
+import { useEffect } from "react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router";
 import {
   Sidebar,
   SidebarContent,
@@ -34,6 +35,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "~/components/ui/sidebar";
+import { usePuterStore } from "~/lib/puter";
 
 // Menu items.
 const items = [
@@ -65,9 +67,22 @@ const items = [
 ];
 
 export function AppSidebar() {
+  const { auth, isLoading } = usePuterStore();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const next = searchParams.get("next");
+  const navigate = useNavigate();
+  useEffect(() => {
+    console.log(isLoading);
+    console.log(auth.user?.username);
+    console.log(auth.isAuthenticated);
+    if (auth.isAuthenticated && next) {
+      navigate(next);
+    }
+  }, [auth.isAuthenticated, navigate, next]);
   return (
     <Sidebar className=" rounded-full">
-      <SidebarContent className="bg-gray-50 shadow-xl text-gray-800">
+      <SidebarContent className="bg-gray-50 dark:bg-gradient-dark shadow-xl text-gray-800">
         <SidebarGroup>
           <SidebarGroupLabel className="text-black text-2xl font-semibold text-gradient mb-2">
             Studently
@@ -99,7 +114,9 @@ export function AppSidebar() {
             className="flex gap-2 w-full p-2 rounded-md text-sm bg-gray-100 items-center"
           >
             <User2Icon />
-            <div>Profile</div>
+            <div>
+              {auth.isAuthenticated ? "@" + auth.user?.username : "Profile"}
+            </div>
           </Link>
 
           <Link
@@ -113,6 +130,7 @@ export function AppSidebar() {
           <Link
             to="#"
             className="flex gap-2 text-red-600 bg-red-100 w-full p-2 rounded-md text-sm items-center"
+            onClick={auth.signOut}
           >
             <LogOut className="text-red-700" />
             <div>Logout</div>

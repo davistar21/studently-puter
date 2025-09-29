@@ -31,10 +31,13 @@ body {
 
 main {
   /* background: linear-gradient(135deg, #c5fffeb1, #e2e2ff); */
-  @apply min-h-screen w-full md:px-4;
+  @apply min-h-screen w-full;
+}
+p {
+  /* color: #deb1e3; */
 }
 h1 {
-  @apply text-5xl lg:text-[84px] text-gradient leading-tight tracking-[-2px] font-semibold;
+  @apply text-5xl lg:text-[84px] text-gradient dark:text-gradient-2 leading-tight tracking-[-2px] font-semibold;
   color: transparent;
   background: linear-gradient(135deg, #ab8c95, black, #8e97c5);
   background-clip: text;
@@ -51,6 +54,13 @@ h2 {
   background: linear-gradient(135deg, #ab8c95, black, #8e97c5);
   background-clip: text;
 }
+.neumorphic {
+  border-radius: 28px;
+  background: #0e3f3f;
+  box-shadow:
+    inset 23px 23px 46px #0a2d2d,
+    inset -23px -23px 46px #125151;
+}
 .text-clamp {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -65,8 +75,8 @@ label {
 }
 input {
   @apply w-full p-3 rounded-xl  bg-white;
-  border: 2px solid rgba(36, 99, 235, 0.421);
-  box-shadow: inset 0 0 4px 0 rgba(36, 99, 235, 0.421);
+  border: 2px solid #2463eb6b;
+  box-shadow: inset 0 0 4px 0 #2463eb6b;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -176,12 +186,28 @@ form {
 @utility bg-gradient-dark {
   background: linear-gradient(135deg, #0e2762, #195c80, #0e2762);
 }
-
+@utility bg-glass {
+  background: transparent;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+@utility bg-neumorphic {
+  background: #fafafa;
+  box-shadow:
+    inset -15px -15px 30px #eeeeee,
+    inset 15px 15px 30px #ffffff;
+}
+@utility bg-neumorphic-dark {
+  background: #172754;
+  box-shadow:
+    inset -23px -23px 46px #101c3c,
+    inset 23px 23px 46px #1e326c;
+}
 @utility text-gradient {
   @apply bg-clip-text text-transparent bg-gradient-to-r from-[#AB8C95] via-[#000000] to-[#8E97C5];
 }
 @utility text-gradient-2 {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#4955db] to-[#1c3e77];
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#4955db] via-[#bceaff] to-[#1c3e77];
 }
 
 @utility gradient-hover {
@@ -323,5 +349,33 @@ form {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 50px;
+  aspect-ratio: 1;
+  display: grid;
+  border: 4px solid #0000;
+  border-radius: 50%;
+  border-right-color: #25b09b;
+  animation: l15 1s infinite linear;
+}
+.loader::before,
+.loader::after {
+  content: "";
+  grid-area: 1/1;
+  margin: 2px;
+  border: inherit;
+  border-radius: 50%;
+  animation: l15 2s infinite;
+}
+.loader::after {
+  margin: 8px;
+  animation-duration: 3s;
+}
+@keyframes l15 {
+  100% {
+    transform: rotate(1turn);
   }
 }

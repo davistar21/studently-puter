@@ -1,7 +1,17 @@
 // src/pages/Dashboard.tsx
 import { BookOpen, GraduationCap, Calendar, BarChart3 } from "lucide-react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
+import { usePuterStore } from "~/lib/puter";
 
 export default function Dashboard() {
+  const { auth } = usePuterStore();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!auth.isAuthenticated) {
+      navigate("/auth?next=/dashboard");
+    }
+  }, [auth.isAuthenticated]);
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       {/* Header */}

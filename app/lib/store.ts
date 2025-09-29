@@ -1,90 +1,96 @@
-// store.ts
+// src/lib/store.ts
 import { create } from "zustand";
-import type { AppState, Semester, Course, Topic } from "types/store";
+import type { Semester, Course } from "types";
+import type { PuterStore } from "./puter";
+// import type { KV } from "puter-js"; // adjust import if needed
+
+type AppState = {
+  semesters: Semester[];
+  isLoading: boolean;
+  selectedSemesterId: string | null;
+
+  setSemesters: (semesters: Semester[]) => void;
+  setSelectedSemesterId: (id: string | null) => void;
+
+  loadSemestersFromKV: (kv: PuterStore["kv"]) => Promise<void>;
+  addSemesterToKV: (kv: PuterStore["kv"]) => Promise<void>;
+  addCourseToSemester: (
+    kv: PuterStore["kv"],
+    semesterId: string,
+    newCourse: Course
+  ) => Promise<void>;
+  getSemesterById: (semesterId: string) => Semester | null;
+};
 
 export const useAppStore = create<AppState>((set, get) => ({
   semesters: [],
-  getCourse: (semesterId: string, courseId: string) => {
-    const semester = get().getSemester(semesterId);
-    if (!semester) return;
-    const course = semester.courses.find((e) => e.id === courseId);
-    return course;
+  isLoading: false,
+  selectedSemesterId: null,
+
+  setSemesters: (semesters) => set({ semesters }),
+  setSelectedSemesterId: (id) => set({ selectedSemesterId: id }),
+
+  loadSemestersFromKV: async (kv) => {
+    try {
+      set({ isLoading: true });
+
+      const raw = (await kv.list("semester:*", true)) as KVItem[];
+      const semesters = raw.map((item) => JSON.parse(item.value)) as Semester[];
+
+      set({ semesters });
+    } catch (err) {
+      console.error("Failed to load semesters from KV", err);
+    } finally {
+      set({ isLoading: false });
+    }
   },
-  addSemester: (semester: Semester) =>
-    set((state) => ({ semesters: [...state.semesters, semester] })),
 
-  removeSemester: (semesterId: string) =>
-    set((state) => ({
-      semesters: state.semesters.filter((s) => s.id !== semesterId),
-    })),
+  addSemesterToKV: async (kv) => {
+    try {
+      set({ isLoading: true });
 
-  addCourse: (semesterId: string, course: Course) =>
-    set((state) => ({
-      semesters: state.semesters.map((s) =>
-        s.id === semesterId ? { ...s, courses: [...s.courses, course] } : s
-      ),
-    })),
+      const { semesters } = get();
+      const newSem: Semester = {
+        id: crypto.randomUUID().split("-")[0],
+        name: `Semester ${semesters.length + 1}`,
+        courses: [],
+        units: 0,
+      };
 
-  updateCourse: (semesterId: string, course: Course) =>
-    set((state) => ({
-      semesters: state.semesters.map((s) =>
-        s.id === semesterId
-          ? {
-              ...s,
-              courses: s.courses.map((c) => (c.id === course.id ? course : c)),
-            }
-          : s
-      ),
-    })),
-
-  // addTopic: (semesterId: string, courseId: string, topic: Topic) =>
-  //   set((state) => ({
-  //     semesters: state.semesters.map((s) =>
-  //       s.id === semesterId
-  //         ? {
-  //             ...s,
-  //             courses: s.courses.map((c) =>
-  //               // c.id === courseId ? { ...c, topics: [...c.topics, topic] } : c
-  //             ),
-  //           }
-  //         : s
-  //     ),
-  //   })),
-
-  // updateTopicStatus: (semesterId, courseId, topicId, status) =>
-  //   set((state) => ({
-  //     semesters: state.semesters.map((s) =>
-  //       s.id === semesterId
-  //         ? {
-  //             ...s,
-  //             courses: s.courses.map((c) =>
-  //               c.id === courseId
-  //                 ? {
-  //                     ...c,
-  //                     topics: c.topics.map((t) =>
-  //                       t.id === topicId ? { ...t, status } : t
-  //                     ),
-  //                   }
-  //                 : c
-  //             ),
-  //           }
-  //         : s
-  //     ),
-  //   })),
-  getSemester: (semesterId: string) => {
-    const semester = get().semesters.find((s) => s.id === semesterId);
-    if (!semester) return;
-    return semester;
+      await kv.set(`semester:${newSem.id}`, JSON.stringify(newSem));
+      set({ semesters: [...semesters, newSem] });
+    } catch (err) {
+      console.error("Failed to add semester", err);
+    } finally {
+      set({ isLoading: false });
+    }
   },
-  getTotalUnits: (semesterId: string) => {
-    const semester = get().getSemester(semesterId);
-    const totalUnits = semester?.courses.reduce((sum, c) => sum + c.units, 0);
-    return totalUnits;
-  },
-  calculateGPA: (semesterId: string) => {
-    const semester = get().getSemester(semesterId);
 
-    const totalUnits = get().getTotalUnits(semesterId);
-    const gpa = totalUnits ? Math.random() * 5 : 0; // mock GPA
+  addCourseToSemester: async (kv, semesterId, newCourse) => {
+    const { semesters } = get();
+
+    const key = `semester:${semesterId}`;
+    const semester = semesters.find((s) => s.id === semesterId);
+    if (!semester) throw new Error("Semester not found in store");
+
+    const updatedCourses = [...semester.courses, newCourse];
+    const updatedSemester: Semester = {
+      ...semester,
+      units: semester.units + newCourse.units,
+      courses: updatedCourses,
+    };
+
+    await kv.set(key, JSON.stringify(updatedSemester));
+
+    const updatedSemesters = semesters.map((s) =>
+      s.id === semesterId ? updatedSemester : s
+    );
+
+    set({ semesters: updatedSemesters });
+  },
+
+  getSemesterById: (id: string) => {
+    const { semesters } = get();
+    return semesters.find((s) => s.id === id) || null;
   },
 }));

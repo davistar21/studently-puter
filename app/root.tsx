@@ -15,6 +15,11 @@ import NavBar from "./components/NavBar";
 import { SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
 import { AppSidebar } from "./components/AppSidebar";
 import ThemeToggle from "./components/ThemeToggle";
+import { ToastProvider } from "./components/ToastProvider";
+import { usePuterStore } from "./lib/puter";
+import { useEffect } from "react";
+import { Breadcrumb } from "./components/ui/breadcrumb";
+import Breadcrumbs from "./components/Breadcrumbs";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -30,6 +35,10 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { init } = usePuterStore(); //initialize puter
+  useEffect(() => {
+    init();
+  }, [init]);
   return (
     <html lang="en">
       <head>
@@ -38,7 +47,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="bg-red-500">
+      <body>
+        <script src="https://js.puter.com/v2/"></script>
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
           {children}
         </ThemeProvider>
@@ -52,29 +62,35 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <SidebarProvider>
-      {/* <div className="app-container flex lg:flex-row flex-col"> */}
-      {/* <NavBar /> */}
-      <AppSidebar />
-      <main>
-        <header className="flex items-center p-4 sticky">
-          <SidebarTrigger className="text-black" />
-          <Link to="/dashboard">
-            {/* <h2 className="!font-bold md:hidden">Studently</h2>{" "} */}
-            <div className="h-24">
-              <img
-                src="/images/studently-logo-temppng.png"
-                alt=""
-                className="object-contain"
-              />
+      <ToastProvider>
+        {/* <div className="app-container flex lg:flex-row flex-col"> */}
+        {/* <NavBar /> */}
+        <AppSidebar />
+        <main className="">
+          <header className="flex flex-col gap-2 p-4">
+            <div className="flex items-center sticky">
+              <SidebarTrigger className="text-black" />
+              <Link to="/dashboard">
+                {/* <h2 className="!font-bold md:hidden">Studently</h2>{" "} */}
+                <div className="h-10">
+                  <img
+                    src="/images/studently-logo-temppng.png"
+                    alt=""
+                    className="object-contain"
+                  />
+                </div>
+              </Link>
+              <div className="ml-auto">
+                <ThemeToggle />
+              </div>
             </div>
-          </Link>
-          <div className="ml-auto">
-            <ThemeToggle />
-          </div>
-        </header>
-        <Outlet />
-      </main>
-      {/* </div> */}
+            <Breadcrumbs />
+          </header>
+          <Outlet />
+        </main>
+
+        {/* </div> */}
+      </ToastProvider>
     </SidebarProvider>
   );
 }
