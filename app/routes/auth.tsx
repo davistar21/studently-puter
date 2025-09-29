@@ -39,7 +39,7 @@ export default function AuthPage() {
       {/* Headline */}
       {/* <h2 className="!font-semibold">{isLogin ? "Welcome Back" : "Join Us"}</h2> */}
 
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 flex flex-col gap-16 dark:bg-glass mx-auto mt-[20%]">
+      <div className="w-full max-w-[60vw] bg-white rounded-2xl shadow-lg p-8 flex flex-col gap-16 dark:bg-glass mx-auto mt-[20%] items-center">
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="">Welcome</h1>
           <span>@{auth.user?.username || "new_user"}</span>
