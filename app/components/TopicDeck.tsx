@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import type { Topic } from "types/store";
+import type { Topic } from "types";
 import { useState } from "react";
 
 const STATUS_PROGRESS_MAP: Record<Topic["status"], number> = {

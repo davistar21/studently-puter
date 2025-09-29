@@ -6,7 +6,7 @@ import TopicDeck from "~/components/TopicDeck";
 import { useParams } from "react-router";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useAppStore } from "~/lib/store";
-import type { Topic, Course } from "types/store";
+import type { Topic, Course } from "types";
 import type { Semester } from "types";
 import { usePuterStore } from "~/lib/puter";
 import type { ToastType } from "~/components/toast";
@@ -67,8 +67,8 @@ const CourseDetailsPage = () => {
 
       const updatedCourse = {
         ...course,
-        topics: [...(course.topics ?? []), newTopic],
-      };
+        topics: [...(course.topics || ([] as Topic[])), newTopic],
+      } as Course;
 
       const updatedSemester = {
         ...sem,
@@ -78,8 +78,8 @@ const CourseDetailsPage = () => {
       };
 
       // ✅ Call the store's updateSemester function
-      await updateSemester(kv, semesterId, updatedSemester);
-
+      updateSemester(kv, semesterId, updatedSemester);
+      form.reset();
       showToast("Topic added successfully", "success");
     } catch (err: any) {
       console.error("Failed to add topic", err);
