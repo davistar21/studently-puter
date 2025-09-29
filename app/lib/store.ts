@@ -19,6 +19,11 @@ type AppState = {
     semesterId: string,
     newCourse: Course
   ) => Promise<void>;
+  updateSemester: (
+    kv: PuterStore["kv"],
+    semesterId: string,
+    updatedSemester: Semester
+  ) => void;
   getSemesterById: (semesterId: string) => Semester | null;
 };
 
@@ -65,7 +70,21 @@ export const useAppStore = create<AppState>((set, get) => ({
       set({ isLoading: false });
     }
   },
-
+  updateSemester: async (kv, semesterId, updatedSemester) => {
+    try {
+      set({ isLoading: true });
+      const { semesters } = get();
+      await kv.set(`semester:${semesterId}`, JSON.stringify(updatedSemester));
+      const updatedSemesters = semesters.map((s) =>
+        s.id === semesterId ? updatedSemester : s
+      );
+      set({ semesters: updatedSemesters });
+    } catch (err) {
+      console.error("Failed to update semester", err);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
   addCourseToSemester: async (kv, semesterId, newCourse) => {
     const { semesters } = get();
 

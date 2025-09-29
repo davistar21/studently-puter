@@ -13,8 +13,13 @@ import { useAppStore } from "~/lib/store";
 const SemesterPage = () => {
   const gpa = 0.0;
   const { semesterId } = useParams();
-  const { semesters, isLoading, addCourseToSemester, getSemesterById } =
-    useAppStore();
+  const {
+    semesters,
+    isLoading,
+    loadSemestersFromKV,
+    addCourseToSemester,
+    getSemesterById,
+  } = useAppStore();
   const semester = getSemesterById(semesterId || "");
   console.log("emeser,", semesters);
   const courses = semester?.courses ?? [];
@@ -22,6 +27,14 @@ const SemesterPage = () => {
   const [error, setError] = useState("");
   const { kv } = usePuterStore();
   const randomCompletion = 56;
+  const { setSelectedSemesterId } = useAppStore();
+
+  useEffect(() => {
+    if (!semesterId) return;
+    setSelectedSemesterId(semesterId);
+    loadSemestersFromKV(kv);
+  }, [semesterId]);
+
   function handleEdit(id: string) {}
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -55,7 +68,7 @@ const SemesterPage = () => {
       </div>
     );
   return (
-    <div className="p-6 space-y-8   min-h-screen bg-[url('/images/bg-soft-light.png')] dark:bg-[url('/images/bg-soft-dark.png')] bg-cover bg-repeat bg-center relative">
+    <div className="px-2 py-4 space-y-8   min-h-screen bg-[url('/images/bg-soft-light.png')] dark:bg-[url('/images/bg-soft-dark.png')] bg-cover bg-repeat bg-center relative">
       {isLoading && <Loader />}
       {/* Header */}
       <h1 className="text-2xl font-bold text-gray-800">
@@ -230,12 +243,12 @@ const SemesterPage = () => {
           </AppDialog>
         </div>
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-white rounded-2xl shadow">
-            <thead className="bg-gray-100 text-gray-700">
+          <table className="min-w-full bg-white dark:bg-glass shadow">
+            <thead className="bg-gray-100 dark:bg-gray-800 dark:text-white text-gray-700">
               <tr>
                 <th className="p-3 text-left">Course</th>
-                <th className="p-3 text-left">Units</th>
-                <th className="p-3 text-left">Grade</th>
+                <th className="p-3 text-center">Units</th>
+                <th className="p-3 text-center">Grade</th>
                 <th> </th>
               </tr>
             </thead>
@@ -243,11 +256,11 @@ const SemesterPage = () => {
               {courses?.map((c, idx) => (
                 <tr
                   key={idx}
-                  className="border-b last:border-none text-gray-800"
+                  className="border-b last:border-none text-gray-800 dark:text-white"
                 >
                   <td className="p-3">{c.code}</td>
-                  <td className="p-3">{c.units}</td>
-                  <td className="p-3">{c.grade}</td>
+                  <td className="p-3 text-center">{c.units}</td>
+                  <td className="p-3 text-center">{c.grade}</td>
                   <td>
                     <AppDialog
                       triggerLabel="Edit"
@@ -298,7 +311,7 @@ const SemesterPage = () => {
                   </td>
                 </tr>
               ))}
-              <tr className="bg-gray-50 font-semibold text-gray-600">
+              <tr className="bg-gray-50  dark:bg-gray-800 dark:text-white font-semibold text-gray-600">
                 <td className="p-3">Total</td>
                 <td className="p-3">{totalUnits}</td>
                 <td className="p-3">—</td>

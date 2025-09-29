@@ -53,7 +53,7 @@ const TopicDeck = ({ topics }: { topics: Topic[] }) => {
               <motion.div
                 className="bg-blue-500 h-2 rounded-full"
                 initial={false}
-                animate={{ width: `${progress}%` }}
+                animate={{ width: `${progress ?? 0}%` }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
               />
             </div>

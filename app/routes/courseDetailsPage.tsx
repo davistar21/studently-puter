@@ -4,7 +4,7 @@ import AppDialog from "~/components/AppDialog";
 import { Button } from "~/components/ui/button";
 import TopicDeck from "~/components/TopicDeck";
 import { useParams } from "react-router";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useAppStore } from "~/lib/store";
 import type { Topic, Course } from "types/store";
 import type { Semester } from "types";
@@ -18,15 +18,16 @@ const CourseDetailsPage = () => {
   // const [course, setCourse] = useState<Course | null>(null);
   // const [isLoading, setIsLoading] = useState(false);
   const { kv } = usePuterStore();
-  // const [error, setError] = useState("");
-  // const [statusText, setStatusText] = useState("");
+  const [error, setError] = useState("");
+  const [statusText, setStatusText] = useState("");
   const [status, setStatus] = useState<ToastType | null>(null);
   const { showToast } = useToast();
   // const [progress, setProgress] = useState<number>(0);
-  const [topics, setTopics] = useState<Topic[]>([]);
+  // const [topics, setTopics] = useState<Topic[]>([]);
   const {
     semesters,
     isLoading,
+    updateSemester,
     setSemesters,
     getSemesterById,
     loadSemestersFromKV,
@@ -38,98 +39,145 @@ const CourseDetailsPage = () => {
     setSelectedSemesterId(semesterId);
     loadSemestersFromKV(kv);
   }, [semesterId]);
-
-  useEffect(() => {
-    async function loadCourse() {
-      try {
-        setIsLoading(true);
-        const key = `semester:${semesterId}`;
-        if (!courseId || !semesterId) return;
-        const currentSemesterString = await kv.get(key);
-        if (!currentSemesterString) return;
-        const currentSemester = JSON.parse(currentSemesterString) as Semester;
-        const currentCourse = currentSemester.courses.find(
-          (course) => course.id === courseId
-        );
-        if (!currentCourse) return;
-        setCourse(currentCourse);
-        setStatusText("Loaded courses successfully");
-        if (!currentCourse.topics) return;
-        setTopics(currentCourse.topics);
-      } catch (err: any) {
-        setIsLoading(false);
-        setError("Failed to get course");
-        setStatusText("Failed to get course");
-        setStatus("error");
-      } finally {
-        setIsLoading(false);
-        if (!status) return;
-        showToast(statusText, status);
-      }
-    }
-    loadCourse();
-  }, []);
-
-  useEffect(() => {
-    console.log("course has been updated");
-  }, [course, topics]);
-
+  const course = useMemo(() => {
+    const sem = semesterId ? getSemesterById(semesterId) : null;
+    return sem?.courses.find((c) => c.id === courseId) ?? null;
+  }, [semesterId, courseId, semesters]);
+  const topics = useMemo(() => course?.topics ?? [], [course]);
   async function handleAddTopic(e: FormEvent<HTMLFormElement>) {
-    try {
-      setIsLoading(true);
-      e.preventDefault();
+    e.preventDefault();
 
-      const key = `semester:${semesterId}`;
+    try {
       const form = e.currentTarget.closest("form");
-      if (!form) return;
+      if (!form || !semesterId || !course) return;
 
       const formData = new FormData(form);
       const title = formData.get("course-topic") as string;
       if (!title) return;
 
-      const newTopic: Topic = {
+      const newTopic = {
         id: crypto.randomUUID().split("-")[0],
         title,
         status: "not_started",
         progress: 0,
       };
 
-      const existingValueString = await kv.get(key);
-      if (!existingValueString) throw new Error("Semester not found");
+      const sem = getSemesterById(semesterId);
+      if (!sem) throw new Error("Semester not found");
 
-      const existingValue = JSON.parse(existingValueString) as Semester;
-
-      if (!course) return;
-
-      const updatedCourse: Course = {
+      const updatedCourse = {
         ...course,
-        topics: [...(course.topics ?? []), newTopic], // default to [] if undefined
+        topics: [...(course.topics ?? []), newTopic],
       };
 
-      const updatedCourses = existingValue.courses.map((c) =>
-        c.id === course.id ? updatedCourse : c
-      );
-
-      const updatedValue: Semester = {
-        ...existingValue,
-        courses: updatedCourses,
+      const updatedSemester = {
+        ...sem,
+        courses: sem.courses.map((c) =>
+          c.id === course.id ? updatedCourse : c
+        ),
       };
 
-      // Persist the updated semester with the new course topic
-      await kv.set(key, JSON.stringify(updatedValue));
+      // ✅ Call the store's updateSemester function
+      await updateSemester(kv, semesterId, updatedSemester);
 
-      // Update local state
-      setTopics((prev) => [...prev, newTopic]);
+      showToast("Topic added successfully", "success");
     } catch (err: any) {
-      setStatus("error");
-      setStatusText("Failed to add topic");
-      console.error("Failed to add topic:", err.message);
-    } finally {
-      setIsLoading(false);
-      if (!status) return;
-      showToast(statusText, status);
+      console.error("Failed to add topic", err);
+      showToast("Failed to add topic", "error");
     }
   }
+
+  // useEffect(() => {
+  //   async function loadCourse() {
+  //     try {
+  //       setIsLoading(true);
+  //       const key = `semester:${semesterId}`;
+  //       if (!courseId || !semesterId) return;
+  //       const currentSemesterString = await kv.get(key);
+  //       if (!currentSemesterString) return;
+  //       const currentSemester = JSON.parse(currentSemesterString) as Semester;
+  //       const currentCourse = currentSemester.courses.find(
+  //         (course) => course.id === courseId
+  //       );
+  //       if (!currentCourse) return;
+  //       setCourse(currentCourse);
+  //       setStatusText("Loaded courses successfully");
+  //       if (!currentCourse.topics) return;
+  //       setTopics(currentCourse.topics);
+  //     } catch (err: any) {
+  //       setIsLoading(false);
+  //       setError("Failed to get course");
+  //       setStatusText("Failed to get course");
+  //       setStatus("error");
+  //     } finally {
+  //       setIsLoading(false);
+  //       if (!status) return;
+  //       showToast(statusText, status);
+  //     }
+  //   }
+  //   loadCourse();
+  // }, []);
+
+  useEffect(() => {
+    console.log("course has been updated");
+  }, [course, topics]);
+
+  // async function handleAddTopic(e: FormEvent<HTMLFormElement>) {
+  //   try {
+  //     setIsLoading(true);
+  //     e.preventDefault();
+
+  //     const key = `semester:${semesterId}`;
+  //     const form = e.currentTarget.closest("form");
+  //     if (!form) return;
+
+  //     const formData = new FormData(form);
+  //     const title = formData.get("course-topic") as string;
+  //     if (!title) return;
+
+  //     const newTopic: Topic = {
+  //       id: crypto.randomUUID().split("-")[0],
+  //       title,
+  //       status: "not_started",
+  //       progress: 0,
+  //     };
+
+  //     const existingValueString = await kv.get(key);
+  //     if (!existingValueString) throw new Error("Semester not found");
+
+  //     const existingValue = JSON.parse(existingValueString) as Semester;
+
+  //     if (!course) return;
+
+  //     const updatedCourse: Course = {
+  //       ...course,
+  //       topics: [...(course.topics ?? []), newTopic], // default to [] if undefined
+  //     };
+
+  //     const updatedCourses = existingValue.courses.map((c) =>
+  //       c.id === course.id ? updatedCourse : c
+  //     );
+
+  //     const updatedValue: Semester = {
+  //       ...existingValue,
+  //       courses: updatedCourses,
+  //     };
+
+  //     // Persist the updated semester with the new course topic
+  //     await kv.set(key, JSON.stringify(updatedValue));
+
+  //     // Update local state
+  //     setTopics((prev) => [...prev, newTopic]);
+  //   } catch (err: any) {
+  //     setStatus("error");
+  //     setStatusText("Failed to add topic");
+  //     console.error("Failed to add topic:", err.message);
+  //   } finally {
+  //     setIsLoading(false);
+  //     if (!status) return;
+  //     showToast(statusText, status);
+  //   }
+  // }
   // if (isLoading)
   //   return (
   //     <div className="min-h-screen flex items-center justify-center">
